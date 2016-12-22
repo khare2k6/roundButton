@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundButton">
+        <!--This enum value decide what will be the type of main content for this round button-->
+        <attr name="typeOfMainContent" format="enum" >
+            <enum name="singleCharacter" value="0" />
+            <enum name="text" value="1" />
+            <enum name="drawable" value="2" />
+            </attr>
+        <!-- Text of main content-->
+        <attr name="mainText" format="string"/>
+        <!-- Text color of main content text-->
+        <attr name="fontColorMainTextNormal" format="reference"/>
+        <!-- colour of text when button is selected/pressed-->
+        <attr name="fontColorMainTextSelected" format="reference"/>
+
+        <!-- Subcontent that will appear just below of main content-->
+        <attr name="subText" format="string"/>
+        <!-- Font size of sub content text-->
+        <attr name="fontSizeSubContent" format="dimension"/>
+        <!-- Text color of secondary content text-->
+        <attr name="fontColorSubTextNormal" format="reference"/>
+        <!-- Text color of secondary content text whene selected-->
+        <attr name="fontColorSubTextSelected" format="reference"/>
+
+
+        <!-- If main content is a drawable, drawable referrence to it-->
+        <attr name="mainContentDrawable" format="reference"/>
+        <!-- If main content is a drawable, filled colour when selected-->
+        <attr name="selectedContentDrawable" format="reference"/>
+
+        <!-- Edge/border colour of rounded button-->
+        <attr name="outlineColor" format="reference"/>
+        <!-- fill colour with which button should be by default filled-->
+        <attr name="buttonBackgroundColorNormal" format="reference"/>
+        <!-- fill colour with which button should be by filled when pressed-->
+        <attr name="buttonBackgroundColorSelected" format="reference"/>
+        <!-- radius of rounded button-->
+        <attr name="radiusOfButton" format="integer"/>
+        <!-- whether to show transition animation for change of background fill color of button-->
+        <attr name="tranisitionColorBackground" format="boolean"/>
+
+        <!-- color of sub text when button is selected/pressed-->
+        <attr name="pressedSubTextFontColor" format="reference"/>
+    </declare-styleable>
+</resources>
