@@ -28,12 +28,16 @@
     <someday.roundbutton.RoundButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        custom:typeOfMainContent="text"
-        custom:mainText="Start"
+        custom:typeOfMainContent="singleCharacter"
+        custom:drawable="@drawable/ico_play"
+        custom:mainText="3"
         custom:radiusOfButton="300"
         custom:tranisitionColorBackground = "true"
         custom:buttonBackgroundColorNormal="@android:color/holo_blue_bright"
-        custom:fontColorMainTextSelected="@color/colorAccent"
+        custom:fontColorMainTextNormal = "@android:color/black"
+        custom:fontColorMainTextSelected="@android:color/white"
+        custom:fontColorSubTextNormal="@android:color/black"
+        custom:fontColorSubTextSelected="@android:color/white"
         custom:buttonBackgroundColorSelected="@color/colorPrimaryDark"
         custom:subText="min"/>
 
