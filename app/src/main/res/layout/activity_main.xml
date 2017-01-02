@@ -28,10 +28,10 @@
     <someday.roundbutton.RoundButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        custom:typeOfMainContent="singleCharacter"
-        custom:drawable="@drawable/ico_play"
+        custom:typeOfMainContent="more"
+        custom:drawable="@drawable/speaker"
         custom:mainText="3"
-        custom:radiusOfButton="300"
+        custom:radiusOfButton="200"
         custom:tranisitionColorBackground = "true"
         custom:buttonBackgroundColorNormal="@android:color/holo_blue_bright"
         custom:fontColorMainTextNormal = "@android:color/black"
@@ -41,7 +41,6 @@
         custom:buttonBackgroundColorSelected="@color/colorPrimaryDark"
         custom:subText="min"/>
 
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -49,5 +48,24 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    <!--<someday.roundbutton.SliderRoundButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--custom:radius="100"-->
+        <!--custom:mainTextSliderView="3"-->
+        <!--custom:subTextSliderView="min"-->
+        <!--custom:slidingDistance="400"-->
+        <!--custom:buttonOneBoundryColor="@android:color/black"-->
+        <!--custom:buttonOneFillColorNormal="@android:color/holo_blue_bright"-->
+        <!--custom:buttonOneFillColorSelected="@color/colorPrimaryDark"-->
+        <!--custom:buttonOneFontColorNormal="@android:color/black"-->
+        <!--custom:buttonOneFontColorSelected="@android:color/white"-->
+
+        <!--custom:buttonTwoFillColorNormal="@android:color/holo_green_light"-->
+        <!--custom:buttonTwoFontColorNormal="@android:color/black"-->
+        <!--custom:holderLineColor = "@android:color/black"-->
+        <!--custom:holderLineWidth = "3"-->
+        <!--android:id="@+id/sliderRoundButton" />-->
 
 </android.support.design.widget.CoordinatorLayout>

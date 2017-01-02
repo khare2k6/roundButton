@@ -6,6 +6,7 @@
             <enum name="singleCharacter" value="0" />
             <enum name="text" value="1" />
             <enum name="drawable" value="2" />
+            <enum name="more" value="3" />
             </attr>
         <!-- Text of main content-->
         <attr name="mainText" format="string"/>
@@ -41,7 +42,34 @@
         <attr name="radiusOfButton" format="integer"/>
         <!-- whether to show transition animation for change of background fill color of button-->
         <attr name="tranisitionColorBackground" format="boolean"/>
+    </declare-styleable>
 
+    <!-- styleble properties for Slider view-->
+    <declare-styleable name="SliderView">
+        <!-- Radius of the slider view defines the radius of the round buttons inside the slider view-->
+        <attr name="radius" format="float"/>
+        <!-- Main text that is to be appeared on button 1-->
+          <!-- how long slider disntance can be-->
+        <attr name="slidingDistance" format="float"/>
+
+        <attr name="buttonOneBoundryColor" format="reference" />
+        <attr name="buttonOneFillColorNormal" format="reference"/>
+        <attr name="buttonOneFillColorSelected" format="reference"/>
+        <attr name="mainTextSliderView" format="string"/>
+        <attr name="subTextSliderView" format="string"/>
+        <attr name="buttonOneFontColorNormal" format="reference" />
+        <attr name="buttonOneFontColorSelected" format="reference" />
+
+        <!--<attr name="buttonTwoBoundryColor" format="reference" />-->
+        <attr name="buttonTwoFillColorNormal" format="reference"/>
+        <attr name="buttonTwoFontColorNormal" format="reference"/>
+        <!-- the line which visualizes holder-->
+        <attr name="holderLineColor" format="reference"/>
+        <attr name="holderLineWidth" format="float"/>
+
+        <!--<attr name="buttonTwoFillColorSelected" format="reference"/>-->
+        <!--<attr name="buttonTwoFontColorNormal" format="reference" />-->
+        <!--<attr name="buttonTwoFontColorSelected" format="reference" />-->
 
     </declare-styleable>
 </resources>

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,14 +36,20 @@ public class RoundButton extends View {
     private Paint mPaintButtonOutline, mPaintButtonFill, mPaintPenMainText, mPaintPenSubText;
     private boolean mAnimateFillColorEnabled = false;
     //colour of rounded button's edge.
-    private int mButtonOutlineColor,
-            mButtonFillColorNormal,
-            mMainTextColorNormal,
-            mSubTextColorNormal,
+    private int mButtonOutlineColor;
 
-            mButtonFillColorSelected,
-            mMainTextColorSelected,
-            mSubTextColorSelected;
+      public RoundButton(Context context) {
+        super(context);
+        this.mContext = context;
+    }
+
+    private int mButtonFillColorNormal;
+    private int mMainTextColorNormal;
+    private int mSubTextColorNormal;
+
+    private int mButtonFillColorSelected;
+    private int mMainTextColorSelected;
+    private int mSubTextColorSelected;
     //size of diameter of round
     private float mRadius,mCenterX,mCenterY,mMainTextXStart,mMainTextYStart, mSubTextXStart, mSubTextYStart;
     //subtext string
@@ -60,8 +67,16 @@ public class RoundButton extends View {
     // bitmap incase main content of this button is an image
     private Bitmap mBitmap;
     private Drawable mDrwable;
+    //rectangle bound within which drawable/bitmap will be drawn
     private Rect mDrawableRect;
 
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        mVisible = visibility;
+    }
+
+    private int mVisible = VISIBLE;
     public RoundButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -74,7 +89,7 @@ public class RoundButton extends View {
             mSubText = a.getString(R.styleable.RoundButton_subText);
             mMainText = a.getString(R.styleable.RoundButton_mainText);
             mButtonOutlineColor = a.getColor(R.styleable.RoundButton_outlineColor, Color.BLACK);
-            mButtonFillColorNormal = a.getColor(R.styleable.RoundButton_buttonBackgroundColorNormal, Color.WHITE);
+            mButtonFillColorNormal = a.getColor(R.styleable.RoundButton_buttonBackgroundColorNormal, Color.RED);
             mMainTextColorNormal = a.getColor(R.styleable.RoundButton_fontColorMainTextNormal, Color.BLACK);
             mSubTextColorNormal = a.getColor(R.styleable.RoundButton_fontColorSubTextNormal, Color.BLACK);
 
@@ -100,7 +115,7 @@ public class RoundButton extends View {
         return mDetector.onTouchEvent(event);
     }
 
-    private void init() {
+    protected void init() {
         mPaintButtonOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaintButtonOutline.setColor(mButtonOutlineColor);
         mPaintButtonOutline.setStyle(Paint.Style.STROKE);
@@ -135,6 +150,7 @@ public class RoundButton extends View {
                 break;
         }
     }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -198,17 +214,13 @@ public class RoundButton extends View {
         }
     }
 
-
-    @Override
-    public void invalidate() {
-        Log.d(TAG, "invalidate called");
-        super.invalidate();
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw CALLED: "+ mButtonState);
+        Log.d(TAG, "onDraw CALLED: " + mButtonState);
+        if (INVISIBLE == mVisible) {
+            return;
+        }
         if (!mAnimateFillColorEnabled){
             setPaintColors();
         }
@@ -230,6 +242,14 @@ public class RoundButton extends View {
                 canvas.drawBitmap(mBitmap, null, mDrawableRect, null);
                 canvas.drawText(mSubText, mSubTextXStart, mSubTextYStart, mPaintPenSubText);
                 break;
+            case MORE:
+                float smallerCircleSize = 7;
+                float distanceFromEachOther = (float) 2.5;
+                canvas.drawCircle(mCenterX, mCenterY, mRadius/smallerCircleSize, mPaintButtonOutline);
+                canvas.drawCircle(mCenterX - mRadius/distanceFromEachOther, mCenterY, mRadius/smallerCircleSize, mPaintButtonOutline);
+                canvas.drawCircle(mCenterX + mRadius/distanceFromEachOther, mCenterY, mRadius/smallerCircleSize, mPaintButtonOutline);
+                break;
+
         }
 
         //temp
@@ -247,7 +267,8 @@ public class RoundButton extends View {
         UNKNOWN(-1),
         SINGLE_CHARACTER(0),
         TEXT(1),
-        IMAGE(2);
+        IMAGE(2),
+        MORE(3);
 
         private int mValue;
 
@@ -272,20 +293,72 @@ public class RoundButton extends View {
         }
     }
 
+    /**
+     * Exposed to integrator class to be able to set state of this button manually.
+     * @param selected
+     */
+    public void setButtonSelected(boolean selected) {
+        mButtonState = selected ? BUTTON_STATE.SELECTED : BUTTON_STATE.NORMAL;
+        if (mAnimateFillColorEnabled) {
+            animateThis();
+        }else {
+            invalidate();
+        }
+    }
+
+    /**
+     * Required for animator object, so that transition from one colour to another is smooth.
+     * This api changes the background color of the button
+     * @param color
+     */
     public void setBackgroundColor(int color){
         Log.d(TAG, "setBackgroundColor called.."+color);
         mPaintButtonFill.setColor(color);
         invalidate();
     }
 
+
+    /**
+     * Required for animator object, so that transition from one colour to another is smooth.
+     * This api changes the font color of the button's main text and subtext.
+     * @param color
+     */
     public void setContentTextColor(int color){
         if (mContentType.equals(MAIN_CONTENT_TYPE.SINGLE_CHARACTER) || mContentType.equals(MAIN_CONTENT_TYPE.TEXT)) {
             mPaintPenMainText.setColor(color);
             mPaintPenSubText.setColor(color);
-//            invalidate();
         }
     }
 
+    /**
+     * Incase button is supposed to move completely by dx and dy distances
+     * @param dx
+     * @param dy
+     */
+    public void recenter(float dx, float dy) {
+        mCenterX += dx;
+        mCenterY += dy;
+
+        mMainTextXStart += dx;
+        mMainTextYStart += dy;
+
+        mSubTextXStart += dx;
+        mSubTextYStart += dy;
+        invalidate();
+    }
+
+//    public void move(float dy) {
+//        Log.d(TAG,"dy = "+(int)dy);
+//        ObjectAnimator anim = ObjectAnimator.ofFloat(this, "centerY", mCenterY, mCenterY +(int) dy);
+//        anim.setDuration(200);
+//        anim.start();
+//        mCenterY += (int)dy;
+//
+//    }
+    /**
+     * Smooth filling of background fill color of button and text colors. For transiting animation
+     * from normal to selected and vice versa.
+     */
     private void animateThis() {
         int animPeriod = 1000;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -318,14 +391,17 @@ public class RoundButton extends View {
             animSet.start();
         }
     }
+
+
     /**
      * State of the button , different colours might be required to draw each state
      */
-    private enum BUTTON_STATE{
+    public enum BUTTON_STATE{
         NORMAL,
         PRESSED,
         SELECTED
     }
+
     /**
      * Gesture detection class for simple gestures like single tap,double tap long press etc on view
      */
@@ -346,6 +422,12 @@ public class RoundButton extends View {
         }
 
         @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            recenter(0,-distanceY);
+            return true;
+        }
+
+        @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d(TAG, "onSingleTapConfirmed");
             //toggle the selection state for button
@@ -359,6 +441,65 @@ public class RoundButton extends View {
             }
             return true;
         }
+
     }
 
+    /**
+     * Setters here
+     */
+    public void setAnimateFillColorEnabled(boolean mAnimateFillColorEnabled) {
+        this.mAnimateFillColorEnabled = mAnimateFillColorEnabled;
+    }
+
+    public void setButtonOutlineColor(int mButtonOutlineColor) {
+        this.mButtonOutlineColor = mButtonOutlineColor;
+    }
+
+    public void setButtonFillColorNormal(int mButtonFillColorNormal) {
+        this.mButtonFillColorNormal = mButtonFillColorNormal;
+    }
+
+    public void setMainTextColorNormal(int mMainTextColorNormal) {
+        this.mMainTextColorNormal = mMainTextColorNormal;
+    }
+
+    public void setSubTextColorNormal(int mSubTextColorNormal) {
+        this.mSubTextColorNormal = mSubTextColorNormal;
+    }
+
+    public void setButtonFillColorSelected(int mButtonFillColorSelected) {
+        this.mButtonFillColorSelected = mButtonFillColorSelected;
+    }
+
+    public void setMainTextColorSelected(int mMainTextColorSelected) {
+        this.mMainTextColorSelected = mMainTextColorSelected;
+    }
+
+    public void setSubTextColorSelected(int mSubTextColorSelected) {
+        this.mSubTextColorSelected = mSubTextColorSelected;
+    }
+
+    public void setRadius(float mRadius) {
+        this.mRadius = mRadius;
+    }
+
+    public void setSubText(String mSubText) {
+        this.mSubText = mSubText;
+    }
+
+    public void setMainText(String mMainText) {
+        this.mMainText = mMainText;
+    }
+
+    public void setContentType(MAIN_CONTENT_TYPE mContentType) {
+        this.mContentType = mContentType;
+    }
+
+    public void setCenterX(float mCenterX) {
+        this.mCenterX = mCenterX;
+    }
+
+    public void setCenterY(float mCenterY) {
+        this.mCenterY = mCenterY;
+    }
 }
